@@ -6,13 +6,16 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 
 public class ExelCrwal {
     public static void main(String[] args) {
         try (FileInputStream file = new FileInputStream("/Users/soyrice/Desktop/javaL/WordProgram/src/excel/image.xlsx")) {
-            // IOUtils.setByteArrayMaxOverride(Integer.MAX_VALUE); // Consider removing this line
+            IOUtils.setByteArrayMaxOverride(Integer.MAX_VALUE); // Consider removing this line
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
             //Create Workbook instance holding reference to .xlsx file
             XSSFWorkbook workbook = new XSSFWorkbook(file);
@@ -20,16 +23,16 @@ public class ExelCrwal {
             //Get first/desired sheet from the workbook
             XSSFSheet sheet = workbook.getSheetAt(0);
 
-            //Iterate through each rows one by one
+            int columnIndex = Integer.parseInt(br.readLine()); // 예시로 3번째 열을 선택
+
             Iterator<Row> rowIterator = sheet.iterator();
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
-                //For each row, iterate through all the columns
-                Iterator<Cell> cellIterator = row.cellIterator();
 
-                while (cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    //Check the cell type and format accordingly
+                Cell cell = row.getCell(columnIndex); // 선택한 열의 셀을 가져옴
+
+                // 셀이 null이 아닌 경우에만 처리
+                if (cell != null) {
                     switch (cell.getCellType()) {
                         case NUMERIC:
                             System.out.print(cell.getNumericCellValue() + "\t");
@@ -38,12 +41,12 @@ public class ExelCrwal {
                             System.out.print(cell.getStringCellValue() + "\t");
                             break;
                         default:
-                            System.out.println("Unknown cell type: " + cell.getCellType());
-                            break;
+                            throw new IllegalStateException("Unexpected value: " + cell.getCellType());
                     }
                 }
-                System.out.println("");
+                System.out.println(""); // 각 행의 처리가 끝난 후 개행
             }
+            file.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
