@@ -9,7 +9,7 @@ public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     public static void main(String[] args) throws IOException {
 
-        String excelData = String.valueOf(ReadExcel.excelGet(br.readLine()));
+        String excelData = String.valueOf(ReadExcel.excelGet(br.readLine(), 9));
         StringTokenizer st = new StringTokenizer(excelData, ",");
 
         String[] dataArrays = new String[st.countTokens()];
